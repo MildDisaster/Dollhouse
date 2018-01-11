@@ -1,0 +1,73 @@
+#default menu.c32
+default vesamenu.c32
+
+menu resolution 800 600
+menu background #80002a2a 
+menu width 98
+
+menu color screen	37;40      #8089aaaa #00000000 std
+menu color border	30;44      #ff074848 #00000000 std
+menu color title	1;36;44    #ff90a6b1 #00000000 std
+menu color unsel	37;44      #6089aaaa #00000000 std
+menu color hotkey	1;37;44    #ff52788b #00000000 std
+menu color sel		7;37;40    #ff000000 #df89aaab all
+menu color hotsel	1;7;37;40  #ff000000 #df89aaaa all
+menu color disabled	1;30;44    #60cccccc #00000000 std
+menu color scrollbar	30;44      #40000000 #00000000 std
+menu color tabmsg	31;40      #9083bd6b #00000000 std
+menu color cmdmark	1;36;40    #c000ffff #00000000 std
+menu color cmdline	37;40      #c0ffffff #00000000 std
+menu color pwdborder	30;47      #80ffffff #20ffffff std
+menu color pwdheader	31;47      #80ff8080 #20ffffff std
+menu color pwdentry	30;47      #80ffffff #20ffffff std
+menu color timeout_msg	37;40      #80ffffff #00000000 std
+menu color timeout	1;37;40    #c0ffffff #00000000 std
+menu color help		37;40      #c0ffffff #00000000 std
+menu color msg07	37;40      #90ffffff #00000000 std
+
+prompt 0
+timeout 300
+ONTIMEOUT 10
+
+
+MENU TITLE - PXE Boot Menu -
+
+LABEL LocalRepo
+MENU LABEL ^Install CentOS7 - Local Repo
+	KERNEL /netboot/vmlinuz
+	APPEND initrd=/netboot/initrd.img inst.repo=ftp://yourdomain/pxeboot devfs=nomount
+
+MENU SEPARATOR
+
+LABEL Minimal
+MENU LABEL ^Install CentOS7 - Local & Minimal Kickstart
+	KERNEL /netboot/vmlinuz
+	APPEND initrd=/netboot/initrd.img inst.repo=ftp://yourdomain/pxeboot inst.ks=ftp://yourdomain/config/CentOS7-minimal.ks devfs=nomount
+
+LABEL Nvme
+MENU LABEL ^Install CentOS7 - Local & Minimal Kickstart on NVME
+        KERNEL /netboot/vmlinuz
+        APPEND initrd=/netboot/initrd.img inst.repo=ftp://yourdomain/pxeboot inst.ks=ftp://yourdomain/config/CentOS7-minimal-nvme.ks devfs=nomount
+
+MENU SEPARATOR
+
+LABEL VNC
+MENU LABEL ^Install CentOS7 - Local & VNC
+	KERNEL /netboot/vmlinuz
+	APPEND initrd=/netboot/initrd.img inst.repo=ftp://yourdomain/pxeboot devfs=nomount inst.vnc inst.vncpassword=password
+
+MENU SEPARATOR
+
+LABEL RemoteRepo
+MENU LABEL ^Install CentOS7 - http://mirror.centos.org Repo
+	KERNEL /netboot/vmlinuz
+	APPEND initrd=/netboot/initrd.img inst.repo=http://mirror.centos.org/centos/7/os/x86_64/ devfs=nomount ip=dhcp
+
+MENU SEPARATOR
+
+LABEL Local
+MENU LABEL ^Boot from local drive
+	MENU DEFAULT
+	LOCALBOOT 0
+	TIMEOUT 80
+

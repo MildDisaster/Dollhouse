@@ -1,0 +1,42 @@
+#
+# Recipe : Create centos7 pxeboot server
+#
+# Jan 10, 2018
+#
+# Standard caveats : no selinux or firewall 
+#
+# I drop this on the yum repo box 
+# Might require some adjustments to support UEFI booting ?!
+
+
+# Install some packages
+yum install tftp tftp-server syslinux
+
+# Move some files around
+cp /usr/share/syslinux/pxelinux.0 /var/lib/tftpboot/
+cp /usr/share/syslinux/menu.c32 /var/lib/tftpboot/
+cp /usr/share/syslinux/memdisk /var/lib/tftpboot/
+cp /usr/share/syslinux/mboot.c32 /var/lib/tftpboot/
+cp /usr/share/syslinux/chain.c32 /var/lib/tftpboot/
+cp /usr/share/syslinux/vesamenu.c32 /var/lib/tftpboot/
+
+# Make some foldies 
+mkdir /var/lib/tftpboot/pxelinux.cfg
+mkdir /var/lib/tftpboot/netboot
+
+# Pull some bootables from the DVD image ( could probably go online too )
+mount /dev/cdrom /mnt
+cp /mnt/images/pxeboot/vmlinuz /var/lib/tftpboot/netboot/
+cp /mnt/images/pxeboot/initrd.img /var/lib/tftpboot/netboot/
+
+# create a boot menu for tftp, example in /files
+touch /var/lib/tftpboot/pxelinux.cfg/default
+
+# create a kickstart file, examples in /files
+touch /var/ftp/config/CentOS7-minimal.ks
+
+# engage hamsters
+systemctl enable tftp
+systemctl start tftp
+
+
