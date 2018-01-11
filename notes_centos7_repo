@@ -1,0 +1,39 @@
+#
+# Recipe : Create local centos7 yum repo
+#
+# Jan 10, 2018
+#
+# Standard caveats : no selinux or firewall 
+
+
+# Install from whatever source and update
+yum clean all
+rm -rf /var/yum/cache
+yum makecache
+
+yum update
+
+reboot
+
+# Install some packages
+yum install yum-utils createrepo vsftpd
+systemctl enable vsftp
+systemctl start vsftp
+
+# Create local folders 
+mkdir -p /var/ftp/centos/7/os/x86_64/
+mkdir -p /var/ftp/centos/7/updates/x86_64/
+mkdir -p /var/ftp/centos/7/extras/x86_64/
+mkdir -p /var/ftp/centos/7/centosplus/x86_64/
+mkdir -p /var/ftp/config
+
+# Sync up the repos, run once and add to crontab
+/usr/bin/reposync -d -l -m --norepopath --downloadcomps -r base -p /var/ftp/centos/7/os/x86_64/ && /usr/bin/createrepo --update /var/ftp/centos/7/os/x86_64 -g /var/ftp/centos/7/os/x86_64/comps.xml
+/usr/bin/reposync -d -l -m --norepopath --downloadcomps -r updates -p /var/ftp/centos/7/updates/x86_64/ && /usr/bin/createrepo --update /var/ftp/centos/7/updates/x86_64 -g /var/ftp/centos/7/update/x86_64/comps.xml
+/usr/bin/reposync -d -l -m --norepopath --downloadcomps -r extras -p /var/ftp/centos/7/extras/x86_64/ && /usr/bin/createrepo --update /var/ftp/centos/7/extras/x86_64 -g /var/ftp/centos/7/extras/x86_64/comps.xml
+/usr/bin/reposync -d -l -m --norepopath --downloadcomps -r centosplus -p /var/ftp/centos/7/centosplus/x86_64/ && /usr/bin/createrepo --update /var/ftp/centos/7/centosplus/x86_64 -g /var/ftp/centos/7/centosplus/x86_64/comps.xml
+
+# Prep a .repo file for distribution
+cp /etc/yum.repos.d/CentOS-Base.repo /var/ftp/config/
+# open in editor, comment mirrorlist, adjust baseurl
+
